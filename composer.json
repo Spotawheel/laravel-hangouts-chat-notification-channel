@@ -1,0 +1,39 @@
+{
+    "name": "spotawheel/laravel-hangouts-chat-notification-channel",
+    "description": "Laravel Hangouts Chat Notification Channel",
+    "homepage": "https://github.com/spotawheel/laravel-hangouts-chat-notification-channel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stratos Giouldasis",
+            "email": "giouldasis.stratos@gmail.com",
+            "homepage": "https://github.com/gousta",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "illuminate/notifications": "~5.5 || ~6.0",
+        "illuminate/support": "~5.5 || ~6.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "^0.9.5",
+        "phpunit/phpunit": "5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "NotificationChannels\\Hangouts\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "NotificationChannels\\Hangouts\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
