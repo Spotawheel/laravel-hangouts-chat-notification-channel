@@ -1,59 +1,40 @@
 <?php
 
-namespace NotificationChannels\Discord;
+namespace NotificationChannels\Hangouts;
 
 use Exception;
+use Google_Client;
+use Google_Service_HangoutsChat;
+use Google_Service_HangoutsChat_Message;
+use Google_Service_HangoutsChat_Space;
 use Illuminate\Support\Arr;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
-use NotificationChannels\Discord\Exceptions\CouldNotSendNotification;
+use NotificationChannels\Hangouts\Exceptions\CouldNotSendNotification;
 
-class Discord
+class Hangouts
 {
-    protected $baseUrl = 'https://chat.googleapis.com/v1';
+    protected $chat;
 
-    protected $httpClient;
-
-    protected $token;
-
-    public function __construct(HttpClient $http, $token)
+    public function __construct()
     {
-        $this->httpClient = $http;
-        $this->token = $token;
+        $client = new Google_Client();
+        $client->useApplicationDefaultCredentials();
+        $client->addScope('https://www.googleapis.com/auth/chat.bot');
+        $client->authorize();
+
+        $this->chat = new Google_Service_HangoutsChat($client);
     }
 
-    public function send($channel, array $data)
+    public function spaces()
     {
-        return $this->request('POST', 'channels/' . $channel . '/messages', $data);
+        return $this->chat->spaces->listSpaces();
     }
 
-    protected function request($verb, $endpoint, array $data)
+    public function send(string $spaceId, string $text)
     {
-        $url = rtrim($this->baseUrl, '/') . '/' . ltrim($endpoint, '/');
-
-        try {
-            $response = $this->httpClient->request($verb, $url, [
-                'headers' => [
-                    'Authorization' => 'Bot ' . $this->token,
-                ],
-                'json' => $data,
-            ]);
-        } catch (RequestException $exception) {
-            if ($response = $exception->getResponse()) {
-                throw CouldNotSendNotification::serviceRespondedWithAnHttpError($response);
-            }
-
-            throw CouldNotSendNotification::serviceCommunicationError($exception);
-        } catch (Exception $exception) {
-            throw CouldNotSendNotification::serviceCommunicationError($exception);
-        }
-
-        $body = json_decode($response->getBody(), true);
-
-        if (Arr::get($body, 'code', 0) > 0) {
-            throw CouldNotSendNotification::serviceRespondedWithAnApiError($body);
-        }
-
-        return $body;
+        $msg = new Google_Service_HangoutsChat_Message();
+        $msg->setText($text);
+        return $this->chat->spaces_messages->create('spaces/' . $spaceId, $msg);
     }
 }
