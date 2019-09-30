@@ -2,15 +2,9 @@
 
 namespace NotificationChannels\Hangouts;
 
-use Exception;
 use Google_Client;
 use Google_Service_HangoutsChat;
 use Google_Service_HangoutsChat_Message;
-use Google_Service_HangoutsChat_Space;
-use Illuminate\Support\Arr;
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\RequestException;
-use NotificationChannels\Hangouts\Exceptions\CouldNotSendNotification;
 
 class Hangouts
 {
@@ -31,10 +25,10 @@ class Hangouts
         return $this->chat->spaces->listSpaces();
     }
 
-    public function send(string $spaceId, string $text)
+    public function send(HangoutsMessage $message)
     {
-        $msg = new Google_Service_HangoutsChat_Message();
-        $msg->setText($text);
-        return $this->chat->spaces_messages->create('spaces/' . $spaceId, $msg);
+        $payload = new Google_Service_HangoutsChat_Message();
+        $payload->setText($message->text);
+        return $this->chat->spaces_messages->create($message->space, $payload);
     }
 }

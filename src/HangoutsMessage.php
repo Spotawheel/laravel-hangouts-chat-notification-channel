@@ -2,9 +2,22 @@
 
 namespace NotificationChannels\Hangouts;
 
-use Illuminate\Support\Arr;
-
 class HangoutsMessage
 {
-    // Message structure here
+    public $text;
+    public $space;
+
+    public function text($text)
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
+    public function space($space)
+    {
+        $this->space = $space;
+
+        return $this;
+    }
 }

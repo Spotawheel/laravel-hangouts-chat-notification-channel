@@ -15,10 +15,14 @@ use NotificationChannels\Hangouts\Exceptions\CouldNotSendNotification;
 class HangoutsTest extends \PHPUnit_Framework_TestCase
 {
     /** @test */
-    public function list_spaces()
+    public function spaces_messages_create()
     {
         $chat = new Hangouts();
-        $data = $chat->spaces();
-        var_dump($data->spaces);
+        $spacesResult = $chat->spaces();
+
+        foreach ($spacesResult->spaces as $space) {
+            $sendResult = $chat->send($space->name, 'Hello world!');
+            echo json_encode($sendResult);
+        }
     }
 }

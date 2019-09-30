@@ -7,9 +7,17 @@ use Illuminate\Notifications\Notification;
 
 class HangoutsChannel
 {
-    public function __construct()
+    /**
+     * @var \NotificationChannels\Hangouts\Hangouts
+     */
+    protected $hangouts;
+
+    /**
+     * @param \NotificationChannels\Hangouts\Hangouts $hangouts
+     */
+    public function __construct(Hangouts $hangouts)
     {
-        // Initialisation code here
+        $this->hangouts = $hangouts;
     }
 
     /**
@@ -18,14 +26,19 @@ class HangoutsChannel
      * @param mixed $notifiable
      * @param \Illuminate\Notifications\Notification $notification
      *
+     * @return array
+     *
      * @throws \NotificationChannels\Hangouts\Exceptions\CouldNotSendNotification
      */
     public function send($notifiable, Notification $notification)
     {
-        //$response = [a call to the api of your notification send]
+        $space = $notifiable->routeNotificationFor('hangouts');
+        if (empty($space)) {
+            throw new CouldNotSendNotification('Notifiable must have a routeNotificationFor() space');
+        }
 
-        //        if ($response->error) { // replace this by the code need to check for errors
-        //            throw CouldNotSendNotification::serviceRespondedWithAnError($response);
-        //        }
+        $message = $notification->toHangouts($notifiable);
+
+        return $this->hangouts->send($space, $message);
     }
 }
