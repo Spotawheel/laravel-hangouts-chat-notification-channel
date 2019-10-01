@@ -25,10 +25,10 @@ class Hangouts
         return $this->chat->spaces->listSpaces();
     }
 
-    public function send(HangoutsMessage $message)
+    public function send(string $space, HangoutsMessage $message)
     {
         $payload = new Google_Service_HangoutsChat_Message();
         $payload->setText($message->text);
-        return $this->chat->spaces_messages->create($message->space, $payload);
+        return $this->chat->spaces_messages->create($space, $payload);
     }
 }

@@ -13,11 +13,4 @@ class HangoutsMessage
 
         return $this;
     }
-
-    public function space($space)
-    {
-        $this->space = $space;
-
-        return $this;
-    }
 }
