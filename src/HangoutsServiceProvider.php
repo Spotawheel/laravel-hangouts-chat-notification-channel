@@ -11,7 +11,7 @@ class HangoutsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->when(Channel::class)
+        $this->app->when(HangoutsChannel::class)
             ->needs(Hangouts::class)
             ->give(function () {
                 return new Hangouts();
